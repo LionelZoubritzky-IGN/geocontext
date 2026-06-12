@@ -61,6 +61,7 @@ Tous les tools exposent les mêmes annotations MCP dans leur définition `tools/
 - [`gpf_wfs_describe_type`](#gpf_wfs_describe_type)
 - [`gpf_wfs_get_feature_by_id`](#gpf_wfs_get_feature_by_id)
 - [`gpf_wfs_get_features`](#gpf_wfs_get_features)
+- [`adresse`](#adresse)
 - [`pointsdinteret`](#pointsdinteret)
 
 ## `geocode`
@@ -1488,6 +1489,153 @@ Aucun `outputSchema` unique n'est exposé. La sortie dépend de `result_type` (`
 | Succès `result_type="results"` | oui | non | `content[0].text` est la FeatureCollection stringifiée ; aucun `structuredContent` n'est ajouté dans ce mode. |
 | Succès `result_type="hits"` | oui | oui | `content[0].text` est `JSON.stringify(structuredContent)`. |
 | Succès `result_type="request"` | oui | oui | `content[0].text` est `JSON.stringify(structuredContent)`. |
+| Erreur | oui | oui | `content[0].text` contient `structuredContent.detail`, pas le JSON d'erreur complet de `structuredContent`. |
+
+## `adresse`
+
+Code Source : [src/tools/AdresseTool.ts](../src/tools/AdresseTool.ts)
+
+### Titre
+
+Adresses obtenues par géocodage inverse
+
+### Description du tool
+
+```
+Renvoie les adresses les plus proches des coordonnées en entrée.
+Chaque résultat peut aussi inclure les coordonnées de l'adresse (`centroid`) et sa distance aux coordonnées de départ (`distance`).
+Les réultats sont classés par distance : utilisez des coordonnées précises et montez la valeur de `maximumResponses` si l'information ne semble pas assez pertinente.
+(source : Géoplateforme (service de géocodage)).
+```
+
+### Schéma d’entrée
+
+| Champ | Type | Requis | Description |
+| --- | --- | --- | --- |
+| `lat` | number | oui | La latitude du point. |
+| `lon` | number | oui | La longitude du point. |
+| `maximumResponses` | integer | non | Le nombre maximum de résultats à retourner (entre 1 et 20). Défaut : 3. |
+
+<details>
+<summary>Schéma d’entrée brut</summary>
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "lon": {
+      "type": "number",
+      "description": "La longitude du point.",
+      "minimum": -180,
+      "maximum": 180
+    },
+    "lat": {
+      "type": "number",
+      "description": "La latitude du point.",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "maximumResponses": {
+      "type": "integer",
+      "description": "Le nombre maximum de résultats à retourner (entre 1 et 20). Défaut : 3.",
+      "minimum": 1,
+      "maximum": 20
+    }
+  },
+  "required": [
+    "lon",
+    "lat"
+  ]
+}
+```
+
+</details>
+
+### Schéma de sortie
+
+| Champ | Type | Requis | Description |
+| --- | --- | --- | --- |
+| `results` | array | oui | La liste des addresses à proximité, ordonnée par distance. |
+
+<details>
+<summary>Schéma de sortie brut</summary>
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "results": {
+      "type": "array",
+      "description": "La liste des addresses à proximité, ordonnée par distance.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Le nom de l'adresse, composée soit d'un numéro et nom de rue, soit seulement du nom de la rue, de la localité ou de la commune"
+          },
+          "city": {
+            "type": "string",
+            "description": "La commune"
+          },
+          "zipcode": {
+            "type": "string",
+            "description": "Le code postal"
+          },
+          "context": {
+            "type": "string",
+            "description": "Le numéro du département, le département et la région"
+          },
+          "distance": {
+            "type": "number",
+            "description": "La distance en mètres entre le point demandé et l'adresse indiquée."
+          },
+          "centroid": {
+            "type": "object",
+            "description": "Les coordonnées du centre de l'adresse.",
+            "properties": {
+              "lon": {
+                "type": "number",
+                "description": "La longitude du point.",
+                "minimum": -180,
+                "maximum": 180
+              },
+              "lat": {
+                "type": "number",
+                "description": "La latitude du point.",
+                "minimum": -90,
+                "maximum": 90
+              }
+            },
+            "required": [
+              "lon",
+              "lat"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "city",
+          "zipcode",
+          "context",
+          "distance"
+        ]
+      }
+    }
+  },
+  "required": [
+    "results"
+  ]
+}
+```
+
+</details>
+
+### Réponse MCP
+
+| Cas | `content` | `structuredContent` | Relation entre `content` et `structuredContent` |
+| --- | --- | --- | --- |
+| Succès | oui | oui | `content[0].text` est `JSON.stringify(structuredContent)`. |
 | Erreur | oui | oui | `content[0].text` contient `structuredContent.detail`, pas le JSON d'erreur complet de `structuredContent`. |
 
 ## `pointsdinteret`

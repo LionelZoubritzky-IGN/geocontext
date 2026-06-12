@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 
 import AdminexpressTool from "../../src/tools/AdminexpressTool";
+import AdresseTool from "../../src/tools/AdresseTool"
 import AltitudeTool from "../../src/tools/AltitudeTool";
 import AssietteSupTool from "../../src/tools/AssietteSupTool";
 import CadastreTool from "../../src/tools/CadastreTool";
@@ -16,6 +17,11 @@ const strictInputCases = [
   {
     label: "AdminexpressTool",
     tool: new AdminexpressTool(),
+    validArguments: { lon: 2.3522, lat: 48.8566 },
+  },
+  {
+    label: "AdresseTool",
+    tool: new AdresseTool(),
     validArguments: { lon: 2.3522, lat: 48.8566 },
   },
   {

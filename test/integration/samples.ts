@@ -18,6 +18,7 @@ export const EXPECTED_TOOL_NAMES = [
   "adminexpress",
   "cadastre",
   "urbanisme",
+  "adresse",
   "assiette_sup",
   "pointsdinteret",
   "gpf_wfs_search_types",
