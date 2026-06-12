@@ -97,6 +97,13 @@ const mcpScenarios = [
     // assuming that it won't often change and that the number is correct at the moment of writing
     // (switch to assertScenarioResult with a range if needed in the future)
     expectedResponseFragments: ["19", "batiments"] 
+  },
+  {
+    testName: "should find the building numbers at a street crossing",
+    userInput: "Quel est le numéro du bâtiment de la rue de Tolbiac au coin sud-est de son croisement avec la rue Wurtz, à Paris ?",
+    toolMode: "mcp",
+    requiredToolCalls: ["geocode", "adresse"],
+    expectedResponseFragments: ["233"]
   }
 ] satisfies Level2AgentScenario[];
 
