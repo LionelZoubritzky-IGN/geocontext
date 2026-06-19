@@ -142,7 +142,7 @@ describe("Test PointsDInteretClient.pointsdinteret",() => {
     expect(firstItem.categories).toEqual(["sommet", "élément topographique ou forestier", "détail orographique"]);
     expect(firstItem.city).toEqual('Sada');
     expect(firstItem.zipcode).toEqual('97640');
-    expect(firstItem.distance).toBeCloseTo(30)
+    expect(firstItem.distance).toBeCloseTo(30);
 
   });
 

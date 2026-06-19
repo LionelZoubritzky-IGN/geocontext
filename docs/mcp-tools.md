@@ -1507,9 +1507,8 @@ Points d'intérêt obtenus par géocodage inverse
 ```
 Renvoie les points d'intérêt les plus proches des coordonnées en entrée.
 Le champ `name` contient le nom du point d'intérêt et le champ `categories` liste ses classifications.
-Chaque résultat peut aussi inclure les coordonnées du point d'intérêt (`centroid`), sa distance aux coordonnées de départ (`distance`), ainsi que des informations de localisation (`city`, `zipcode`).
-Les réultats sont classés par distance, puis par importance : utilisez des coordonnées précises et montez la valeur de `maximumResponses` si l'information ne semble pas assez pertinente.
-Pour obtenir un résultat plus détaillé sur un point d'intérêt trouvé, appelez ensuite `wfs_search_types` avec des éléments pertinents de `category`, puis `wfs_get_features` avec le `typename` obtenu et les coordonnées du centroïde.
+Chaque résultat peut aussi inclure les coordonnées du point d'intérêt (`centroid`), sa distance aux coordonnées de départ (`distance`), des informations de localisation (`city`, `zipcode`) et un `feature_ref` utilisable dans `gpf_wfs_get_features_by_id` pour plus d'information.
+Les réultats sont classés par distance, puis par importance : utilise des coordonnées précises et monte la valeur de `maximumResponses` si l'information ne semble pas assez pertinente.
 (source : Géoplateforme (service de géocodage)).
 ```
 
@@ -1519,7 +1518,7 @@ Pour obtenir un résultat plus détaillé sur un point d'intérêt trouvé, appe
 | --- | --- | --- | --- |
 | `lat` | number | oui | La latitude du point. |
 | `lon` | number | oui | La longitude du point. |
-| `maximumResponses` | integer | non | Le nombre maximum de résultats à retourner (entre 1 et 20). Défaut : 3. |
+| `maximumResponses` | integer | non | Le nombre maximum de résultats à retourner (entre 1 et 50). Défaut : 3. |
 
 <details>
 <summary>Schéma d’entrée brut</summary>
@@ -1542,9 +1541,9 @@ Pour obtenir un résultat plus détaillé sur un point d'intérêt trouvé, appe
     },
     "maximumResponses": {
       "type": "integer",
-      "description": "Le nombre maximum de résultats à retourner (entre 1 et 20). Défaut : 3.",
+      "description": "Le nombre maximum de résultats à retourner (entre 1 et 50). Défaut : 3.",
       "minimum": 1,
-      "maximum": 20
+      "maximum": 50
     }
   },
   "required": [
@@ -1577,30 +1576,30 @@ Pour obtenir un résultat plus détaillé sur un point d'intérêt trouvé, appe
         "properties": {
           "name": {
             "type": "string",
-            "description": "Le nom du point d'intérêt trouvé."
+            "description": "Le nom du point d'intérêt trouvé"
           },
           "categories": {
             "type": "array",
-            "description": "Les catégories du point d'intérêt.",
+            "description": "Ses catégories",
             "items": {
               "type": "string"
             }
           },
           "city": {
             "type": "string",
-            "description": "Le nom de la ville où est le point d'intérêt."
+            "description": "Sa ville"
           },
           "zipcode": {
             "type": "string",
-            "description": "Le code postal du point d'intérêt"
+            "description": "Son code postal"
           },
           "distance": {
             "type": "number",
-            "description": "La distance en mètres entre le point demandé et le point d'intérêt retenu."
+            "description": "La distance en mètres entre le point demandé et le point d'intérêt retenu"
           },
           "centroid": {
             "type": "object",
-            "description": "Les coordonnées du centre du point d'intérêt.",
+            "description": "Les coordonnées du centre du point d'intérêt",
             "properties": {
               "lon": {
                 "type": "number",
@@ -1618,6 +1617,24 @@ Pour obtenir un résultat plus détaillé sur un point d'intérêt trouvé, appe
             "required": [
               "lon",
               "lat"
+            ]
+          },
+          "feature_ref": {
+            "type": "object",
+            "description": "Référence WFS réutilisable, notamment avec `gpf_wfs_get_features_by_id` et dans le `intersects_feature_filter` de `gpf_wfs_get_features`.",
+            "properties": {
+              "typename": {
+                "type": "string",
+                "description": "Le `typename` WFS réutilisable pour une requête ultérieure."
+              },
+              "feature_id": {
+                "type": "string",
+                "description": "L'identifiant WFS réutilisable du feature."
+              }
+            },
+            "required": [
+              "typename",
+              "feature_id"
             ]
           }
         },

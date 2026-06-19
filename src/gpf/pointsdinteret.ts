@@ -3,6 +3,7 @@ import logger from "../logger.js";
 import type { JsonFetcher } from "../helpers/http.js";
 import { RateLimiter } from "../helpers/RateLimiter.js";
 import { getEnv } from "../config/env.js";
+import feature_ref_from_cleabs from "../helpers/cleabs.js"
 
 export const POINTSDINTERET_SOURCE = "Géoplateforme (service de géocodage)";
 
@@ -13,6 +14,9 @@ type RawPointsDInteretFeature = {
     city?: string[];
     postcode?: string[];
     distance: number;
+    extrafields?: {
+      cleabs?: string;
+    };
   };
   geometry: {
     type: string;
@@ -30,6 +34,7 @@ export type PointsDInteretResult = {
     lon: number,
     lat: number
   };
+  feature_ref?: { typename: string; feature_id: string };
 };
 
 type RawPointsDInteretResponse = {
@@ -60,7 +65,7 @@ export class PointsDInteretClient {
 
     const json: RawPointsDInteretResponse = await this.fetcher(url);
     const results = Array.isArray(json?.features) ? json.features : [];
-    return results.map((item) => ({
+    return await Promise.all(results.map(async (item) => ({
       name: item.properties.toponym,
       categories: item.properties.category,
       city: Array.isArray(item.properties.city) ? item.properties.city[0] : undefined,
@@ -70,7 +75,8 @@ export class PointsDInteretClient {
         lon: item.geometry.coordinates[0],
         lat: item.geometry.coordinates[1]
       } : undefined,
-    }));
+      feature_ref: await feature_ref_from_cleabs(item.properties.extrafields?.cleabs, item.properties.category.join(" "))
+    })));
   }
 }
 
