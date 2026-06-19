@@ -38,7 +38,8 @@ const pointsdinteretResultSchema = z
     centroid: z.object({
       lon: lonSchema,
       lat: latSchema
-    }).optional().describe("Les coordonnées du centre du point d'intérêt")
+    }).optional().describe("Les coordonnées du centre du point d'intérêt"),
+    cleabs: z.string().optional().describe("La clé absolue du point d'intérêt, utilisable dans le filtre `where` de `gpf_wfs_get_features`"),
 })
 .catchall(z.unknown());
 

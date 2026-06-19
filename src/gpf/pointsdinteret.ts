@@ -13,6 +13,9 @@ type RawPointsDInteretFeature = {
     city?: string[];
     postcode?: string[];
     distance: number;
+    extrafields?: {
+      cleabs?: string;
+    };
   };
   geometry: {
     type: string;
@@ -30,6 +33,7 @@ export type PointsDInteretResult = {
     lon: number,
     lat: number
   };
+  cleabs?: string;
 };
 
 type RawPointsDInteretResponse = {
@@ -70,7 +74,7 @@ export class PointsDInteretClient {
         lon: item.geometry.coordinates[0],
         lat: item.geometry.coordinates[1]
       } : undefined,
-    }));
+      cleabs: item.properties.extrafields?.cleabs,
   }
 }
 

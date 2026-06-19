@@ -19,6 +19,7 @@ export type PointsDInteretResult = {
       lon: number,
       lat: number
     };
+    cleabs?: string;
   }>;
 };
 
