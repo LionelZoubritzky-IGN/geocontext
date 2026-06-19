@@ -16,10 +16,13 @@ export type PointsDInteretResult = {
     zipcode?: string;
     distance: number;
     centroid?: {
-      lon: number,
-      lat: number
+      lon: number;
+      lat: number;
     };
-    cleabs?: string;
+    feature_ref?: {
+      typename: string;
+      feature_id: string;
+    };
   }>;
 };
 
@@ -55,5 +58,7 @@ describe("Geocode Tool (integration)", () => {
     expect(text).toContain("val-cenis");
     expect(text).toContain("savoie");
     expect(text).toContain("auvergne-rhône-alpes");
+    expect(result.results[0].feature_ref?.typename).toBe("BDTOPO_V3:zone_d_activite_ou_d_interet")
+    expect(result.results[0].feature_ref?.feature_id).toBe("zone_d_activite_ou_d_interet.27752")
   }, INTEGRATION_CONFIG.timeout);
 });

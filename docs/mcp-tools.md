@@ -1507,9 +1507,8 @@ Points d'intérêt obtenus par géocodage inverse
 ```
 Renvoie les points d'intérêt les plus proches des coordonnées en entrée.
 Le champ `name` contient le nom du point d'intérêt et le champ `categories` liste ses classifications.
-Chaque résultat peut aussi inclure les coordonnées du point d'intérêt (`centroid`), sa distance aux coordonnées de départ (`distance`), ainsi que des informations de localisation (`city`, `zipcode`).
-Les réultats sont classés par distance, puis par importance : utilisez des coordonnées précises et montez la valeur de `maximumResponses` si l'information ne semble pas assez pertinente.
-Pour obtenir un résultat plus détaillé sur un point d'intérêt trouvé, appelez ensuite `wfs_search_types` avec des éléments pertinents de `category`, puis `wfs_get_features` avec le `typename` obtenu et les coordonnées du centroïde.
+Chaque résultat peut aussi inclure les coordonnées du point d'intérêt (`centroid`), sa distance aux coordonnées de départ (`distance`), des informations de localisation (`city`, `zipcode`) et un `feature_ref` utilisable dans `gpf_wfs_get_features_by_id` pour plus d'information.
+Les réultats sont classés par distance, puis par importance : utilise des coordonnées précises et monte la valeur de `maximumResponses` si l'information ne semble pas assez pertinente.
 (source : Géoplateforme (service de géocodage)).
 ```
 
@@ -1620,9 +1619,23 @@ Pour obtenir un résultat plus détaillé sur un point d'intérêt trouvé, appe
               "lat"
             ]
           },
-          "cleabs": {
-            "type": "string",
-            "description": "La cleabs du point d'intérêt, utilisable dans le filtre `where` de `gpf_wfs_get_features`"
+          "feature_ref": {
+            "type": "object",
+            "description": "Référence WFS réutilisable, notamment avec `gpf_wfs_get_features_by_id` et dans le `intersects_feature_filter` de `gpf_wfs_get_features`.",
+            "properties": {
+              "typename": {
+                "type": "string",
+                "description": "Le `typename` WFS réutilisable pour une requête ultérieure."
+              },
+              "feature_id": {
+                "type": "string",
+                "description": "L'identifiant WFS réutilisable du feature."
+              }
+            },
+            "required": [
+              "typename",
+              "feature_id"
+            ]
           }
         },
         "required": [

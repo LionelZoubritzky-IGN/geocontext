@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import { pointsdinteretClient, POINTSDINTERET_SOURCE } from "../gpf/pointsdinteret.js";
 import { READ_ONLY_OPEN_WORLD_TOOL_ANNOTATIONS } from "../helpers/toolAnnotations.js";
-import { lonSchema, latSchema } from "../helpers/schemas.js";
+import { featureRefSchema, lonSchema, latSchema } from "../helpers/schemas.js";
 import logger from "../logger.js";
 
 // --- Schema ---
@@ -39,7 +39,7 @@ const pointsdinteretResultSchema = z
       lon: lonSchema,
       lat: latSchema
     }).optional().describe("Les coordonnées du centre du point d'intérêt"),
-    cleabs: z.string().optional().describe("La clé absolue du point d'intérêt, utilisable dans le filtre `where` de `gpf_wfs_get_features`"),
+    feature_ref: featureRefSchema.optional().describe("Référence WFS réutilisable, notamment avec `gpf_wfs_get_features_by_id` et dans le `intersects_feature_filter` de `gpf_wfs_get_features`."),
 })
 .catchall(z.unknown());
 
@@ -56,9 +56,8 @@ class PointsDInteretTool extends BaseTool<PointsDInteretInput> {
   description = [
     "Renvoie les points d'intérêt les plus proches des coordonnées en entrée.",
     "Le champ `name` contient le nom du point d'intérêt et le champ `categories` liste ses classifications.",
-    "Chaque résultat peut aussi inclure les coordonnées du point d'intérêt (`centroid`), sa distance aux coordonnées de départ (`distance`), ainsi que des informations de localisation (`city`, `zipcode`).",
-    "Les réultats sont classés par distance, puis par importance : utilisez des coordonnées précises et montez la valeur de `maximumResponses` si l'information ne semble pas assez pertinente.",
-    "Pour obtenir un résultat plus détaillé sur un point d'intérêt trouvé, appelez ensuite `wfs_search_types` avec des éléments pertinents de `category`, puis `wfs_get_features` avec le `typename` obtenu et les coordonnées du centroïde.",
+    "Chaque résultat peut aussi inclure les coordonnées du point d'intérêt (`centroid`), sa distance aux coordonnées de départ (`distance`), des informations de localisation (`city`, `zipcode`) et un `feature_ref` utilisable dans `gpf_wfs_get_features_by_id` pour plus d'information.",
+    "Les réultats sont classés par distance, puis par importance : utilise des coordonnées précises et monte la valeur de `maximumResponses` si l'information ne semble pas assez pertinente.",
     `(source : ${POINTSDINTERET_SOURCE}).`
   ].join("\n");
   protected outputSchemaShape = pointsdinteretOutputSchema;

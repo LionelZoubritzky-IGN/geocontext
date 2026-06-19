@@ -143,7 +143,6 @@ describe("Test PointsDInteretClient.pointsdinteret",() => {
     expect(firstItem.city).toEqual('Sada');
     expect(firstItem.zipcode).toEqual('97640');
     expect(firstItem.distance).toBeCloseTo(30);
-    expect(firstItem.cleabs).toEqual("PAIOROGR0000001600001372");
 
   });
 
